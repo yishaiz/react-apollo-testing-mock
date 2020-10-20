@@ -197,3 +197,33 @@ it('should render loading state initially', () => {
     const tree = component.toJSON();
     expect(tree.children).toContain('Loading...');
 });
+
+
+it('should delete and give visual feedback', async () => {
+    const deleteDog = { name: 'Buck', breed: 'Poodle', id: 1 };
+    const mocks = [
+        {
+            request: {
+                query: DELETE_DOG_MUTATION,
+                variables: { name: 'Buck' },
+            },
+            result: { data: { deleteDog } },
+        },
+    ];
+
+    const component = renderer.create(
+        <MockedProvider mocks={mocks} addTypename={false}>
+            <DeleteButton />
+        </MockedProvider>,
+    );
+
+    // find the button and simulate a click
+    const button = component.root.findByType('button');
+    button.props.onClick(); // fires the mutation
+
+    await new Promise(resolve => setTimeout(resolve, 0)); // wait for response
+
+    const tree = component.toJSON();
+    console.log('result :', tree.children)
+    expect(tree.children).toContain('Deleted!');
+});
