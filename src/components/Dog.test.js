@@ -77,42 +77,61 @@ import {act} from "@testing-library/react";
 //     console.log({tree})
 //     // console.log({component, tree})
 // });
+//
+// it('should render dog (after loading)', async () => {
+//     const dogMock = {
+//         request: {
+//             query: GET_DOG_QUERY,
+//             variables: {name: 'Buck'},
+//         },
+//         result: {
+//             data: {dog: {id: 1, name: 'Buck', breed: 'poodle'}},
+//         },
+//     };
+//
+//     const component = renderer.create(
+//         <MockedProvider mocks={[dogMock]} addTypename={false}>
+//             <Dog name="Buck"/>
+//         </MockedProvider>,
+//     );
+//     // const tree = component.toJSON()
+//     // expect(tree.children).toContain('Loading...')
+//
+//     await act(async () => {
+//         /* fire events that update state */
+//
+//         await new Promise(resolve => setTimeout(resolve, 100)); // wait for response
+//         const p = component.root.findByType('p');
+//
+//         // expect(p.children).toContain('Buck is a poodle');
+//
+//         expect(p.children).toContain('Buck');
+//         expect(p.children).toContain(' is a ');
+//         expect(p.children).toContain('poodle');
+//     });
+//
+//
+// });
 
-it('should render dog (after loading)', async () => {
+it('should show error UI', async () => {
     const dogMock = {
         request: {
             query: GET_DOG_QUERY,
-            variables: {name: 'Buck'},
+            variables: { name: 'Buck' },
         },
-        result: {
-            data: {dog: {id: 1, name: 'Buck', breed: 'poodle'}},
-        },
+        error: new Error('aw shucks'),
     };
 
     const component = renderer.create(
         <MockedProvider mocks={[dogMock]} addTypename={false}>
-            <Dog name="Buck"/>
+            <Dog name="Buck" />
         </MockedProvider>,
     );
-    // const tree = component.toJSON()
-    // expect(tree.children).toContain('Loading...')
 
-    await act(async () => {
-        /* fire events that update state */
+    await new Promise(resolve => setTimeout(resolve, 0)); // wait for response
 
-        await new Promise(resolve => setTimeout(resolve, 100)); // wait for response
-        const p = component.root.findByType('p');
-
-        // expect(p.children).toContain('Buck is a poodle');
-
-        expect(p.children).toContain('Buck');
-        expect(p.children).toContain(' is a ');
-        expect(p.children).toContain('poodle');
-    });
-
-
+    const tree = component.toJSON();
+    expect(tree.children).toContain('Error!');
 });
-
-
 
 
