@@ -112,26 +112,50 @@ import {act} from "@testing-library/react";
 //
 //
 // });
+//
+// it('should show error UI', async () => {
+//     const dogMock = {
+//         request: {
+//             query: GET_DOG_QUERY,
+//             variables: { name: 'Buck' },
+//         },
+//         error: new Error('aw shucks'),
+//     };
+//
+//     const component = renderer.create(
+//         <MockedProvider mocks={[dogMock]} addTypename={false}>
+//             <Dog name="Buck" />
+//         </MockedProvider>,
+//     );
+//
+//     await new Promise(resolve => setTimeout(resolve, 0)); // wait for response
+//
+//     const tree = component.toJSON();
+//     expect(tree.children).toContain('Error!');
+// });
+//
 
-it('should show error UI', async () => {
+
+it('should show error - use GraphQL error', async () => {
     const dogMock = {
         request: {
             query: GET_DOG_QUERY,
-            variables: { name: 'Buck' },
+            variables: {name: 'Buck'},
         },
-        error: new Error('aw shucks'),
+        result: {
+            errors: [new Error('aw shucks')]
+        }
     };
 
     const component = renderer.create(
         <MockedProvider mocks={[dogMock]} addTypename={false}>
-            <Dog name="Buck" />
+            <Dog name="Buck"/>
         </MockedProvider>,
     );
 
     await new Promise(resolve => setTimeout(resolve, 0)); // wait for response
 
     const tree = component.toJSON();
+    // expect(tree.children).toContain('Buck');
     expect(tree.children).toContain('Error!');
 });
-
-
