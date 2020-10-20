@@ -2,6 +2,9 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import {createMockClient, MockedProvider} from '@apollo/client/testing'
 import {GET_DOG_QUERY, Dog} from './Dog'
+import {DeleteButton, DELETE_DOG_MUTATION} from './delete-dog';
+// import DeleteButton, { DELETE_DOG_MUTATION } from './Dog';
+
 import {act} from "@testing-library/react";
 
 // import {render} from '@testing-library/react';
@@ -136,26 +139,61 @@ import {act} from "@testing-library/react";
 //
 
 
-it('should show error - use GraphQL error', async () => {
-    const dogMock = {
-        request: {
-            query: GET_DOG_QUERY,
-            variables: {name: 'Buck'},
+// it('should show error - use GraphQL error', async () => {
+//     const dogMock = {
+//         request: {
+//             query: GET_DOG_QUERY,
+//             variables: {name: 'Buck'},
+//         },
+//         result: {
+//             errors: [new Error('aw shucks')]
+//         }
+//     };
+//
+//     const component = renderer.create(
+//         <MockedProvider mocks={[dogMock]} addTypename={false}>
+//             <Dog name="Buck"/>
+//         </MockedProvider>,
+//     );
+//
+//     await new Promise(resolve => setTimeout(resolve, 0)); // wait for response
+//
+//     const tree = component.toJSON();
+//     // expect(tree.children).toContain('Buck');
+//     expect(tree.children).toContain('Error!');
+// });
+
+
+it('should render delete without error', () => {
+    renderer.create(
+        <MockedProvider mocks={[]}>
+            <DeleteButton/>
+        </MockedProvider>,
+    );
+});
+
+it('should render loading state initially', () => {
+    const deleteDog = { name: 'Buck', breed: 'Poodle', id: 1 };
+    const mocks = [
+        {
+            request: {
+                query: DELETE_DOG_MUTATION,
+                variables: { name: 'Buck' },
+            },
+            result: { data: { deleteDog } },
         },
-        result: {
-            errors: [new Error('aw shucks')]
-        }
-    };
+    ];
 
     const component = renderer.create(
-        <MockedProvider mocks={[dogMock]} addTypename={false}>
-            <Dog name="Buck"/>
+        <MockedProvider mocks={mocks} addTypename={false}>
+            <DeleteButton />
         </MockedProvider>,
     );
 
-    await new Promise(resolve => setTimeout(resolve, 0)); // wait for response
+    // find the button and simulate a click
+    const button = component.root.findByType('button');
+    button.props.onClick(); // fires the mutation
 
     const tree = component.toJSON();
-    // expect(tree.children).toContain('Buck');
-    expect(tree.children).toContain('Error!');
+    expect(tree.children).toContain('Loading...');
 });
