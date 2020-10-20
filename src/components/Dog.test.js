@@ -18,6 +18,21 @@ const mocks = [
                 dog: {id: '1', name: 'Buck', breed: 'bulldog'}
             }
         }
+    },
+    {
+        request: {
+            query: GET_DOG_QUERY,
+            variables: {
+                name: 'Mooki'
+            },
+        },
+        result: () => {
+            return {
+                data: {
+                    dog: {id: '2', name: 'Mooki', breed: 'amstaf'}
+                }
+            }
+        }
     }
 ];
 
@@ -29,11 +44,21 @@ const mocks = [
 // });
 
 // Broken because it's missing Apollo Client in the context
+// const result =
+// console.log({result})
 
 it('should render without error', () => {
     renderer.create(
         <MockedProvider mocks={mocks} addTypename={false}>
             <Dog name="Buck"/>
+        </MockedProvider>
+    );
+});
+
+it('should render without error. using function', () => {
+    renderer.create(
+        <MockedProvider mocks={mocks} addTypename={false}>
+            <Dog name="Mooki"/>
         </MockedProvider>
     );
 });
