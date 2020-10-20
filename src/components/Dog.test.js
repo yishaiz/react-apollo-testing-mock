@@ -62,3 +62,18 @@ it('should render without error. using function', () => {
         </MockedProvider>
     );
 });
+
+it('should render loading state initially', () => {
+    const component = renderer.create(
+        <MockedProvider mocks={[]}>
+            <Dog></Dog>
+        </MockedProvider>
+    )
+
+    const tree = component.toJSON()
+    expect(tree.children).toContain('Loading...')
+
+    console.log({tree})
+    // console.log({component, tree})
+});
+
